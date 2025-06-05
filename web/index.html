@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>runcron - Instantly Run Cron Jobs</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: monospace;
+      background-color: #0d1117;
+      color: #c9d1d9;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      min-width: 100vw;
+      display: block;
+    }
+    .main-header {
+      width: 100vw;
+      left: 0;
+      top: 0;
+      position: fixed;
+      z-index: 100;
+      background: #161b22cc;
+      box-shadow: 0 2px 12px 0 rgba(2, 12, 27, 0.13);
+      border-bottom: 1px solid #22262c;
+      backdrop-filter: blur(6px);
+    }
+    .header-content {
+      max-width: 1200px;
+      width: 96vw;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.7rem 2rem;
+      box-sizing: border-box;
+    }
+    .logo {
+      font-size: 1.5rem;
+      color: #58a6ff;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .logo:visited {
+      color: #58a6ff;
+    }
+    .logo:hover {
+      color: #2ea8ff;
+      text-decoration: none;
+    }
+    nav a {
+      color: #b1bac4;
+      text-decoration: none;
+      margin-left: 2rem;
+      font-size: 1.08rem;
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: #58a6ff;
+    }
+    main {
+      margin-top: 4.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    .hero {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2.5rem;
+    }
+    .main-box, .terminal-mockup.big, .section {
+      max-width: 1200px;
+      min-width: 0;
+      width: 96vw;
+      margin: 0 auto 2.5rem auto;
+      box-sizing: border-box;
+    }
+    .terminal-mockup {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 2.5rem auto;
+      background: #161b22;
+      border-radius: 8px;
+      box-shadow: 0 4px 24px 0 rgba(2, 12, 27, 0.18);
+      overflow: hidden;
+      border: 1.5px solid #22262c;
+    }
+    .terminal-header {
+      background: #21262d;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.red { background: #ff5f56; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27c93f; }
+    .terminal-body {
+      padding: 1.3rem 1.5rem 1.1rem 1.5rem;
+      font-size: 1.13rem;
+      color: #c9d1d9;
+      font-family: 'Fira Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+      background: #161b22;
+      min-height: 90px;
+      line-height: 1.7;
+    }
+    .terminal-text code {
+      background: #21262d;
+      color: #58a6ff;
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    .section {
+      background: rgba(22, 27, 34, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px 0 rgba(2, 12, 27, 0.13);
+      padding: 2rem 2rem 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-sizing: border-box;
+    }
+    .section h2 {
+      margin-top: 0;
+      color: #8b949e;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    .section p {
+      color: #b1bac4;
+      font-size: 1.1rem;
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 700px;
+      width: 100%;
+      margin: 0 auto;
+      background: rgba(22, 27, 34, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px 0 rgba(2, 12, 27, 0.37);
+      padding: 2.5rem 2rem 2rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      color: #58a6ff;
+      margin-bottom: 0.5rem;
+      font-size: 2.5rem;
+    }
+    pre {
+      background: #161b22;
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 1.1rem;
+      margin: 0.5rem 0 1.5rem 0;
+      width: 100%;
+    }
+    .button {
+      display: inline-block;
+      background: #238636;
+      color: white;
+      padding: 0.7rem 1.3rem;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 1.2rem;
+      font-size: 1.1rem;
+      transition: background 0.2s;
+    }
+    .button:hover {
+      background: #2ea043;
+    }
+    h2 {
+      margin-top: 2rem;
+      color: #8b949e;
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    p {
+      color: #b1bac4;
+      font-size: 1.1rem;
+      margin-bottom: 1.2rem;
+      text-align: center;
+    }
+    .terminal-mockup.big {
+      min-height: 320px;
+      font-size: 1.08rem;
+      margin-bottom: 2.5rem;
+    }
+    .terminal-list {
+      list-style: disc inside;
+      margin: 0;
+      padding: 0 0 0 0.5em;
+      display: flex;
+      flex-direction: column;
+      gap: 1.3em;
+    }
+    .terminal-list li {
+      margin-bottom: 0.2em;
+      line-height: 1.7;
+      color: #c9d1d9;
+      font-size: 1em;
+      font-family: inherit;
+    }
+    .terminal-list code {
+      background: #21262d;
+      color: #58a6ff;
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      font-size: 1em;
+    }
+    .code-block {
+      background: #161b22;
+      color: #c9d1d9;
+      border-radius: 8px;
+      padding: 1.3rem 1rem 1.1rem 1rem;
+      font-size: 1.08rem;
+      font-family: 'Fira Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+      overflow-x: auto;
+      margin-bottom: 1.2rem;
+      box-shadow: 0 2px 12px 0 rgba(2, 12, 27, 0.13);
+      border: 1.5px solid #23272e;
+    }
+    .github-link {
+      display: inline-block;
+      background: #24292f;
+      color: #fff;
+      padding: 0.7rem 1.3rem;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1.08rem;
+      transition: background 0.2s;
+      margin-top: 0.5rem;
+    }
+    .github-link:hover {
+      background: #57606a;
+      color: #58a6ff;
+    }
+    @media (max-width: 800px) {
+      .main-box, .terminal-mockup.big, .section {
+        max-width: 100vw;
+        width: 100vw;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+      }
+      .section {
+        padding: 1.2rem 0.5rem 1rem 0.5rem;
+      }
+      .terminal-mockup.big {
+        min-height: 200px;
+        font-size: 0.98rem;
+      }
+    }
+    .real-terminal {
+      background: #181c22;
+      border: 2px solid #23272e;
+      box-shadow: 0 8px 32px 0 rgba(2, 12, 27, 0.22);
+      min-height: 420px;
+      position: relative;
+      overflow: hidden;
+    }
+    .real-terminal .terminal-header {
+      background: #23272e;
+      border-bottom: 1px solid #23272e;
+    }
+    .real-terminal .terminal-body {
+      min-height: 340px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding-bottom: 2.5rem;
+      position: relative;
+    }
+    .terminal-list {
+      margin-top: 2.5rem;
+      margin-bottom: 0;
+    }
+    .terminal-cursor {
+      color: #58a6ff;
+      font-size: 1.2em;
+      font-family: inherit;
+      position: absolute;
+      left: 1.5em;
+      bottom: 1.2em;
+      animation: blink-cursor 1s steps(1) infinite;
+      opacity: 1;
+      pointer-events: none;
+    }
+    @keyframes blink-cursor {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+    .type-line {
+      min-height: 1.7em;
+      white-space: pre;
+      letter-spacing: 0.01em;
+    }
+    .about-list {
+      margin: 1.2em 0 1.2em 1.2em;
+      padding: 0 0 0 1.2em;
+      color: #b1bac4;
+      font-size: 1.08em;
+      line-height: 1.7;
+    }
+    .about-list li {
+      margin-bottom: 0.7em;
+    }
+    /* Responsive terminal height */
+    @media (max-width: 800px) {
+      .real-terminal {
+        min-height: 260px;
+      }
+      .real-terminal .terminal-body {
+        min-height: 160px;
+      }
+    }
+    .terminal-line {
+      display: flex;
+      align-items: center;
+      font-family: inherit;
+      font-size: 1.08em;
+      min-height: 1.7em;
+      white-space: pre-wrap;
+      margin-bottom: 0.1em;
+    }
+    .terminal-prompt {
+      color: #58a6ff;
+      margin-right: 0.5em;
+      font-weight: bold;
+      font-family: inherit;
+    }
+    .terminal-cursor {
+      color: #58a6ff;
+      font-size: 1.2em;
+      font-family: inherit;
+      margin-left: 0.1em;
+      animation: blink-cursor 1s steps(1) infinite;
+      opacity: 1;
+      pointer-events: none;
+    }
+    .terminal-body {
+      font-size: 1.08em;
+    }
+    .about-content {
+      font-family: 'Fira Mono', 'Menlo', 'Monaco', 'Consolas', monospace;
+      font-size: 1.08em;
+      color: #b1bac4;
+      text-align: left;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .about-left {
+      text-align: left !important;
+      margin: 0 0 1.1em 0;
+    }
+    .about-ai-note {
+      font-size: 0.98em;
+      color: #8b949e;
+      font-style: italic;
+      margin-top: 0.5em;
+      margin-left: 2px;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    .install-cmd-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5em;
+      width: 100%;
+      margin-bottom: 0.2em;
+    }
+    #install-cmd {
+      margin: 0;
+      font-size: 1.08em;
+      padding: 0.7em 1em;
+      border-radius: 6px;
+      background: #161b22;
+      color: #c9d1d9;
+      border: 1px solid #23272e;
+      min-width: 340px;
+      max-width: 100%;
+      overflow-x: auto;
+      text-align: center;
+    }
+    .copy-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.3em 0.3em;
+      border-radius: 5px;
+      transition: background 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .copy-btn:hover {
+      background: #23272e;
+    }
+    .copy-feedback {
+      color: #58a6ff;
+      font-size: 0.98em;
+      margin-left: 0.5em;
+      vertical-align: middle;
+      transition: opacity 0.2s;
+    }
+  </style>
+  <!-- Prism.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="header-content">
+      <a href="#" class="logo" id="logo-link">🕒 runcron</a>
+      <nav>
+        <a href="#install">Install</a>
+        <a href="#download">Download</a>
+        <a href="#about">About</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="terminal-mockup big main-box real-terminal">
+        <div class="terminal-header">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="terminal-body" id="terminal-body">
+          <!-- Lines will be dynamically inserted here -->
+        </div>
+      </div>
+    </section>
+    <section class="section main-box" id="install">
+      <h2>📦 Install</h2>
+      <p style="text-align:center;">Paste this into your terminal:</p>
+      <div class="install-cmd-row">
+        <pre id="install-cmd">curl -fsSL https://yourdomain.com/runcron/install.sh | bash</pre>
+        <button class="copy-btn" id="copy-install-cmd" title="Copy to clipboard" aria-label="Copy to clipboard">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="5" y="5" width="12" height="12" rx="2" fill="#22262c" stroke="#58a6ff" stroke-width="1.5"/>
+            <rect x="2.5" y="2.5" width="12" height="12" rx="2" fill="#161b22" stroke="#b1bac4" stroke-width="1.2"/>
+          </svg>
+        </button>
+      </div>
+      <span class="copy-feedback" id="copy-feedback" style="display:none;">Copied!</span>
+    </section>
+    <section class="section main-box" id="download">
+      <h2>🔗 Or Download Manually</h2>
+      <a class="button" href="https://yourdomain.com/runcron/runcron.sh" download>Download runcron.sh</a>
+    </section>
+    <section class="section main-box" id="code">
+      <h2>📝 Here is the current runcron code</h2>
+      <pre class="code-block"><code class="language-bash">#!/bin/bash
+
+# Colors
+BOLD=$(tput bold)
+NORMAL=$(tput sgr0)
+BLUE=$(tput setaf 4)
+GREEN=$(tput setaf 2)
+GRAY=$(tput setaf 8)
+BG=$(tput setab 0)
+RESET=$(tput sgr0)
+
+# Fetch crontab
+cronjobs=$(crontab -l 2>/dev/null | grep -vE '^	*#|^	*$')
+if [ -z "$cronjobs" ]; then
+  echo "${BOLD}${BLUE}No cron jobs found for user: $USER${NORMAL}"
+  exit 0
+fi
+
+IFS=$'\n' read -rd '' -a job_array <<<"$cronjobs"
+
+echo
+ echo "${BOLD}${GREEN}🕒 Your Cron Jobs${NORMAL}"
+echo "─────────────────────────────"
+
+# Print each job with spacing
+for i in "${!job_array[@]}"; do
+  num=$((i+1))
+  printf "\n${BOLD}${BLUE}[%d]${NORMAL}\n" "$num"
+  echo -e "  ${GRAY}${job_array[$i]}${NORMAL}"
+done
+
+echo
+echo -n "${BOLD}Select a job to run [1-${#job_array[@]}]: ${NORMAL}"
+read -r selection
+
+# Validate input
+if [[ ! $selection =~ ^[0-9]+$ ]] || (( selection < 1 || selection > ${#job_array[@]} )); then
+  echo "${BOLD}❌ Invalid selection.${NORMAL}"
+  exit 1
+fi
+
+# Extract command
+selected="${job_array[$((selection-1))]}"
+cmd=$(echo "$selected" | sed -E 's/^(@[a-z]+|\S+\s+\S+\s+\S+\s+\S+\s+\S+)\s+//')
+
+echo
+echo "${BOLD}${GREEN}▶️ Running:${NORMAL} $cmd"
+echo "─────────────────────────────"
+echo
+
+# Run it
+bash -c "$cmd"
+</code></pre>
+      <a class="github-link" href="https://github.com/yourusername/runcron" target="_blank" rel="noopener">View on GitHub</a>
+    </section>
+    <section class="section main-box" id="about">
+      <h2>About <span style="font-size:1.1em;vertical-align:middle;">ℹ️</span></h2>
+      <div class="about-content">
+        <p class="about-left"><span style="font-size:1.1em;vertical-align:middle;">🕒</span> <strong>runcron</strong> was "vibe coded" in just a few hours using Cursor, a next-generation AI-powered IDE. The project is a testament to how quickly ideas can become reality when you trust the tools and let creativity flow. What started as a simple itch—to run cron jobs without the hassle—became a polished, interactive tool in a single session of focused, modern development.</p>
+        <p class="about-left">As an engineer with 27 years of experience, I remember when Dreamweaver and Frontpage generated code that we all avoided, and handwritten code was the only way to ensure quality. For decades, I believed that only code written by hand could be trusted. But the landscape has changed. Today, with tools like Cursor and AI assistance, we can build robust, beautiful, and maintainable software faster than ever before—without sacrificing quality or control.</p>
+        <p class="about-left">runcron is more than just a utility; it's a small celebration of how far our craft has come. If you're curious about the future of coding, or just want to run your cron jobs with style, give it a try.<br><br>— <span class="about-author">Josh. Mobile, Web, Cloud/DevOps Engineer. Builder. Semi-professional Dentist. Unlicensed Tattoo Artist. Ancient Alien Theorist. Freelance Pharmacist. Part-time Magician. Full-time Pug Chauffeur. Professional Complainer.</span></p>
+        <div class="about-ai-note">* AI wrote this too</div>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/prism.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-bash.min.js"></script>
+  <script>
+    // Terminal typing effect with prompt and return effect, cursor always after typed text
+    document.addEventListener('DOMContentLoaded', function() {
+      const terminalScript = [
+        { type: 'prompt', text: "Need to run a cronjob but don't feel like finding the script?" },
+        { type: 'prompt', text: "Don't feel like using crontab -e and copy-pasting?" },
+        { type: 'prompt', text: "runcron" },
+        { type: 'output', text: "\uD83D\uDD50 Your Cron Jobs" },
+        { type: 'output', text: "─────────────────────────────" },
+        { type: 'output', text: "" },
+        { type: 'output', text: "[1]" },
+        { type: 'output', text: "  */15 * * * * redis-cli flushall && sh /home/ubuntu/api/run_warm_cache.sh --days 180 >> /home/ubuntu/cache_warm.log 2>&1" },
+        { type: 'output', text: "" },
+        { type: 'output', text: "[2]" },
+        { type: 'output', text: "  0 2 * * * /usr/bin/python3 /home/ubuntu/scripts/backup_db.py >> /home/ubuntu/backup.log 2>&1" },
+        { type: 'output', text: "" },
+        { type: 'output', text: "[3]" },
+        { type: 'output', text: "  30 6 * * 1 /usr/bin/bash /home/ubuntu/scripts/weekly_report.sh --email admin@example.com" },
+        { type: 'output', text: "" },
+        { type: 'output', text: "Select a job to run [1-3]: " }
+      ];
+      const terminalBody = document.getElementById('terminal-body');
+      let lineIdx = 0;
+      let charIdx = 0;
+      let currentLineDiv = null;
+      let typedText = null;
+      let cursorSpan = null;
+
+      function createNewPromptLine() {
+        const div = document.createElement('div');
+        div.className = 'terminal-line';
+        div.innerHTML = '<span class="terminal-prompt">~/runcron -&gt;</span> <span class="typed-text"></span>';
+        terminalBody.appendChild(div);
+        return div;
+      }
+
+      function createNewOutputLine() {
+        const div = document.createElement('div');
+        div.className = 'terminal-line';
+        div.innerHTML = '<span class="typed-text"></span>';
+        terminalBody.appendChild(div);
+        return div;
+      }
+
+      function typeLine() {
+        if (lineIdx >= terminalScript.length) {
+          // After last line, restart animation after a pause
+          setTimeout(() => {
+            terminalBody.innerHTML = '';
+            lineIdx = 0;
+            charIdx = 0;
+            currentLineDiv = null;
+            typedText = null;
+            typeLine();
+          }, 1200);
+          return;
+        }
+        const entry = terminalScript[lineIdx];
+        if (!currentLineDiv) {
+          if (entry.type === 'prompt') {
+            currentLineDiv = createNewPromptLine();
+          } else {
+            currentLineDiv = createNewOutputLine();
+          }
+          typedText = currentLineDiv.querySelector('.typed-text');
+        }
+        const text = entry.text;
+        if (charIdx < text.length) {
+          typedText.textContent += text[charIdx];
+          charIdx++;
+          setTimeout(typeLine, 22 + Math.random()*40);
+        } else {
+          // Done with this line, move to next
+          charIdx = 0;
+          lineIdx++;
+          currentLineDiv = null;
+          typedText = null;
+          setTimeout(typeLine, 600);
+        }
+      }
+      typeLine();
+    });
+
+    // Scroll to top when clicking the logo
+    document.addEventListener('DOMContentLoaded', function() {
+      var logo = document.getElementById('logo-link');
+      if (logo) {
+        logo.addEventListener('click', function(e) {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    });
+
+    // Copy to clipboard for install command
+    document.addEventListener('DOMContentLoaded', function() {
+      var copyBtn = document.getElementById('copy-install-cmd');
+      var cmd = document.getElementById('install-cmd');
+      var feedback = document.getElementById('copy-feedback');
+      if (copyBtn && cmd && feedback) {
+        copyBtn.addEventListener('click', function() {
+          var text = cmd.textContent.trim();
+          navigator.clipboard.writeText(text).then(function() {
+            feedback.style.display = 'inline';
+            setTimeout(function() { feedback.style.display = 'none'; }, 1200);
+          });
+        });
+      }
+    });
+  </script>
+</body>
+</html>
