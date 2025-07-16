@@ -10,6 +10,8 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
     }
     body {
       font-family: monospace;
@@ -244,6 +246,8 @@
       margin-bottom: 1.2rem;
       box-shadow: 0 2px 12px 0 rgba(2, 12, 27, 0.13);
       border: 1.5px solid #23272e;
+      word-wrap: break-word;
+      white-space: pre-wrap;
     }
     .github-link {
       display: inline-block;
@@ -261,19 +265,216 @@
       background: #57606a;
       color: #58a6ff;
     }
-    @media (max-width: 800px) {
+    /* Mobile Responsive Design */
+    @media (max-width: 768px) {
+      /* Header and Navigation */
+      .header-content {
+        padding: 0.5rem 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .logo {
+        font-size: 1.3rem;
+      }
+      
+      nav {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      
+      nav a {
+        margin-left: 0;
+        font-size: 1rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        transition: background 0.2s;
+      }
+      
+      nav a:hover {
+        background: rgba(88, 166, 255, 0.1);
+      }
+      
+      /* Main content adjustments */
+      main {
+        margin-top: 6rem;
+      }
+      
       .main-box, .terminal-mockup.big, .section {
         max-width: 100vw;
         width: 100vw;
-        padding-left: 0.5rem;
-        padding-right: 0.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        margin-bottom: 1.5rem;
       }
+      
       .section {
-        padding: 1.2rem 0.5rem 1rem 0.5rem;
+        padding: 1.5rem 1rem 1rem 1rem;
+        border-radius: 8px;
       }
+      
+      /* Typography adjustments */
+      h1 {
+        font-size: 2rem;
+        text-align: center;
+      }
+      
+      h2 {
+        font-size: 1.2rem;
+        text-align: center;
+      }
+      
+      p {
+        font-size: 1rem;
+        text-align: center;
+      }
+      
+      /* Terminal adjustments */
       .terminal-mockup.big {
         min-height: 200px;
-        font-size: 0.98rem;
+        font-size: 0.8rem;
+        margin-bottom: 1.5rem;
+      }
+      
+      .terminal-body {
+        padding: 1rem;
+        font-size: 0.8rem;
+      }
+      
+      .terminal-line {
+        font-size: 0.8rem;
+      }
+      
+      .terminal-prompt {
+        font-size: 0.8rem;
+      }
+      
+      .typed-text {
+        font-size: 0.8rem;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        flex: 1;
+        min-width: 0;
+      }
+      
+      /* Code blocks */
+      pre {
+        font-size: 0.9rem;
+        padding: 0.8rem;
+        overflow-x: auto;
+      }
+      
+      .code-block {
+        font-size: 0.9rem;
+        padding: 1rem 0.8rem;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      
+      /* Buttons */
+      .button {
+        font-size: 1rem;
+        padding: 0.6rem 1rem;
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+      }
+      
+      /* Install command row */
+      .install-cmd-row {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      
+      #install-cmd {
+        min-width: auto;
+        width: 100%;
+        font-size: 0.9rem;
+        padding: 0.6rem 0.8rem;
+        box-sizing: border-box;
+      }
+      
+      /* About section */
+      .about-content {
+        font-size: 0.95rem;
+        padding: 0 0.5rem;
+      }
+      
+      .about-left {
+        text-align: center !important;
+      }
+    }
+    
+    /* Extra small devices */
+    @media (max-width: 480px) {
+      .header-content {
+        padding: 0.4rem 0.8rem;
+      }
+      
+      .logo {
+        font-size: 1.2rem;
+      }
+      
+      nav a {
+        font-size: 0.9rem;
+        padding: 0.25rem 0.5rem;
+      }
+      
+      .main-box, .terminal-mockup.big, .section {
+        padding-left: 0.8rem;
+        padding-right: 0.8rem;
+      }
+      
+      .section {
+        padding: 1.2rem 0.8rem 0.8rem 0.8rem;
+      }
+      
+      h1 {
+        font-size: 1.8rem;
+      }
+      
+      h2 {
+        font-size: 1.1rem;
+      }
+      
+      .terminal-body {
+        padding: 0.8rem;
+        font-size: 0.75rem;
+      }
+      
+      .terminal-line {
+        font-size: 0.75rem;
+      }
+      
+      .terminal-prompt {
+        font-size: 0.75rem;
+      }
+      
+      .typed-text {
+        font-size: 0.75rem;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
+        flex: 1;
+        min-width: 0;
+      }
+      
+      pre {
+        font-size: 0.85rem;
+        padding: 0.6rem;
+      }
+      
+      .code-block {
+        font-size: 0.85rem;
+        padding: 0.8rem 0.6rem;
+      }
+      
+      #install-cmd {
+        font-size: 0.85rem;
+        padding: 0.5rem 0.6rem;
       }
     }
     .real-terminal {
@@ -331,7 +532,7 @@
       margin-bottom: 0.7em;
     }
     /* Responsive terminal height */
-    @media (max-width: 800px) {
+    @media (max-width: 768px) {
       .real-terminal {
         min-height: 260px;
       }
@@ -339,13 +540,21 @@
         min-height: 160px;
       }
     }
+    
+    @media (max-width: 480px) {
+      .real-terminal {
+        min-height: 220px;
+      }
+      .real-terminal .terminal-body {
+        min-height: 140px;
+      }
+    }
     .terminal-line {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       font-family: inherit;
       font-size: 1.08em;
       min-height: 1.7em;
-      white-space: pre-wrap;
       margin-bottom: 0.1em;
     }
     .terminal-prompt {
@@ -353,6 +562,7 @@
       margin-right: 0.5em;
       font-weight: bold;
       font-family: inherit;
+      flex-shrink: 0;
     }
     .terminal-cursor {
       color: #58a6ff;
